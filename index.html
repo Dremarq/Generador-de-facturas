@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador de Facturas</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Generador de Facturas</h1>
+
+    <!-- Datos principales -->
+    <div class="invoice-info">
+      <select id="tipo-doc" title="Tipo de Documento">
+        <option value="Factura">Factura</option>
+        <option value="Boleta">Boleta</option>
+      </select>
+      <input type="text" id="cliente" placeholder="Nombre del Cliente" />
+      <input type="text" id="ruc" placeholder="RUC / DNI" maxlength="11" />
+      <input type="text" id="factura-numero" readonly placeholder="Número de Factura" />
+    </div>
+
+    <label>
+      <input type="checkbox" id="agregar-igv" />
+      ¿Agregar IGV (18%)?
+    </label>
+
+    <!-- Formulario para agregar o editar productos -->
+    <form id="product-form">
+      <input type="hidden" id="edit-index" value="-1" />
+      <input type="text" id="product-name" placeholder="Producto" required />
+      <input type="number" id="product-qty" placeholder="Cantidad" required min="1" />
+      <input type="number" id="product-price" placeholder="Precio" step="0.01" required min="0" />
+      <input type="number" id="product-descuento" placeholder="Descuento %" step="0.01" min="0" max="100" value="0" />
+      <button type="submit" id="add-update-btn">Agregar</button>
+      <button type="button" id="cancel-edit-btn" style="display:none;">Cancelar</button>
+    </form>
+
+    <!-- Tabla con productos agregados -->
+    <table id="invoice-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Descuento %</th>
+          <th>Subtotal</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- Monto total -->
+    <div class="total">
+      Total: S/. <span id="total-amount">0.00</span>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <button type="button" onclick="imprimirFactura()">Imprimir Factura</button>
+      <button type="button" onclick="generarPDF()" id="generate-pdf"> Descargar Factura (PDF)</button>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <input type="email" id="email-destino" placeholder="Correo electrónico para enviar factura" style="padding:5px; width: 300px;" />
+      <button type="button" id="enviar-email">Enviar Factura por Correo</button>
+    </div>
+
+    <!-- Sección Historial -->
+    <h2>Historial de Facturas</h2>
+    <input type="text" id="filtro-cliente" placeholder="Filtrar por cliente..." />
+    <table id="historial-facturas">
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Cliente</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+<button id="btn-eliminar-historial" class="btn btn-danger">Eliminar Historial</button>
+
+  </div>
+</body>
+</html>
